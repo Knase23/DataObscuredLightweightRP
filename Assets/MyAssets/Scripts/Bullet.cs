@@ -41,7 +41,6 @@ public class Bullet : MonoBehaviour
 
     public void SetVelocityDirection(Vector3 velocityDirection)
     {
-        
         rigi.velocity = velocityDirection;
     }
 
@@ -59,7 +58,6 @@ public class Bullet : MonoBehaviour
     {
         if(other.tag == "Enviroment")
         {
-            Debug.Log("Hitting Enviroment");
             Destroy(gameObject);
         }
         

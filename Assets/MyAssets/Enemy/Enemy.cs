@@ -21,18 +21,17 @@ public class Enemy : MonoBehaviour
 
             if(bullet.isFromPlayer())
             {
+
                 if (health.TakeDamage(bullet.GetDamage()))
                 {
                     // Enemy dies
-
-
+                    
                     //Replace with something else;
                     gameObject.SetActive(false);
 
                 }
                 Destroy(other.gameObject);
             }
-            
         }
     }
 }

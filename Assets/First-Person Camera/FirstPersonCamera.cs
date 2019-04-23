@@ -35,6 +35,8 @@ public class FirstPersonCamera : MonoBehaviour
     void Start()
     {
         cameraStartingPosition = playerCamera.localPosition;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
@@ -55,6 +57,24 @@ public class FirstPersonCamera : MonoBehaviour
             followAngles = Vector3.SmoothDamp(followAngles, targetAngles, ref followVelocity, cameraSmoothing / 100);
             playerCamera.localRotation = Quaternion.Euler(-followAngles.x + originalRotation.x, 0, 0);
             transform.localRotation = Quaternion.Euler(0, followAngles.y + originalRotation.y, 0);
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.Escape))
+        {
+
+            if (Cursor.visible)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
         }
     }
 }

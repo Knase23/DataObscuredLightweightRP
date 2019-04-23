@@ -7,6 +7,9 @@ public class PlayerCharacter : MonoBehaviour
     Health health;
     Weapon weaponMechanic;
     FirstPersonCamera firstPersonCamera;
+    Movement movement;
+    PlayerJump jump;
+    PlayerCommand command;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +17,9 @@ public class PlayerCharacter : MonoBehaviour
         health = GetComponent<Health>();
         firstPersonCamera = GetComponent<FirstPersonCamera>();
         weaponMechanic = GetComponentInChildren<Weapon>();
+        movement = GetComponent<Movement>();
+        jump = GetComponent<PlayerJump>();
+        command = GetComponent<PlayerCommand>();
     }
     public void Shoot()
     {
@@ -23,7 +29,28 @@ public class PlayerCharacter : MonoBehaviour
     {
         firstPersonCamera.LookAround(x, y);
     }
+    public void Move(float x,float y)
+    {
+        movement.Move(x, y);
+    }
+    public void Jump()
+    {
+        jump.Jump();
+    }
+    public void Command()
+    {
+        command.OutsideCommand();
+    }
+    public void FollowMeCommand()
+    {
+        command.FollowMe();
+    }
 
+
+    public Transform GetFirstPersonCameraJoint()
+    {
+        return firstPersonCamera.playerCamera;
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Bullet")
