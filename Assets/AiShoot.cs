@@ -36,7 +36,7 @@ public class AiShoot : MonoBehaviour
                 createdBulletObject.SetOriginator(gameObject);
                 createdBulletObject.SetDamage(damage);
                 timer = timeBeforeShoot;
-                
+                Gizmos.draw
             }
             timer -= Time.deltaTime;
         }
