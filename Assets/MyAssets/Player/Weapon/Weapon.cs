@@ -9,7 +9,7 @@ public class Weapon : MonoBehaviour
 {
 
     public Transform shootOrigin;
-    public Camera camera;
+    public Camera playerCamera;
     public GameObject bulletPrefab;
     public CustomValue damage = new CustomValue(10);
     public CustomValue speed = new CustomValue(10);
@@ -44,7 +44,7 @@ public class Weapon : MonoBehaviour
 
         Bullet createdBulletObject = Instantiate(bulletPrefab).GetComponent<Bullet>();
         createdBulletObject.transform.position = shootOrigin.transform.position;
-        createdBulletObject.SetVelocityDirection(10 * camera.transform.forward);
+        createdBulletObject.SetVelocityDirection(10 * playerCamera.transform.forward);
         createdBulletObject.SetOriginator(gameObject);
         createdBulletObject.SetDamage(damage);
 

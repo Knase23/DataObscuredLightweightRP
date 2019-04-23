@@ -14,6 +14,8 @@ public class DroneAi : Commandable, IInteractable
         {
             transform.position = hit.position;
             agent = gameObject.AddComponent<NavMeshAgent>();
+            agent.radius = 0.2f;
+            agent.height = 1;
         }
         else
         {
@@ -41,7 +43,7 @@ public class DroneAi : Commandable, IInteractable
             case CommandInfo.Command.Attack:
                 //currentRoutine = StartCoroutine(Follow());
                 break;
-            case CommandInfo.Command.Interact:
+            case CommandInfo.Command.Harvest:
                 //currentRoutine = StartCoroutine(Follow());
                 break;
             case CommandInfo.Command.Defend:
@@ -63,8 +65,7 @@ public class DroneAi : Commandable, IInteractable
             {
                 Vector3 position = currentInfo.target.position;
 
-                if (!agent.isStopped) agent.SetDestination(position);
-
+                if (!agent.isStopped) agent.SetDestination(position);                
 
                 yield return null;
                 if (currentInfo.target?.tag == "FollowPosition")

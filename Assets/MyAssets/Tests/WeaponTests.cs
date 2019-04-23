@@ -30,7 +30,7 @@ namespace Tests
             Camera camera = obj.AddComponent<Camera>();
 
             testWeapon =  weaponObject.AddComponent<Weapon>();
-            testWeapon.camera = camera;
+            testWeapon.playerCamera = camera;
             testWeapon.shootOrigin = testWeapon.transform;
             testWeapon.damage = new CustomValue(30);
             testWeapon.bulletPrefab = Resources.Load<GameObject>("Bullet");
@@ -43,11 +43,7 @@ namespace Tests
             enemy.GetComponent<MeshCollider>().convex = true;
             enemy.GetComponent<MeshCollider>().isTrigger = true;
 
-            
-            
-            
-
-            //Time.timeScale = 10;
+            Time.timeScale = 10;
         }
 
         [UnityTest]

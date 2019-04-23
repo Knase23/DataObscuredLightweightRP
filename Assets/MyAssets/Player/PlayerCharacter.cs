@@ -63,7 +63,7 @@ public class PlayerCharacter : MonoBehaviour
                 {
                     // Enemy dies
 
-
+                    Debug.Log("You Died");
                     //Replace with something else;
                     gameObject.SetActive(false);
 

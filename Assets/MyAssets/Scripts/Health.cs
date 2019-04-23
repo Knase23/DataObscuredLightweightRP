@@ -21,7 +21,7 @@ public class Health : MonoBehaviour
     {
         damage = Mathf.Abs(damage);
         current -= damage;
-        if (current < 0)
+        if (current <= 0)
         {
             current = 0;
             return true;
@@ -37,7 +37,7 @@ public class Health : MonoBehaviour
     {
         health = Mathf.Abs(health);
         current += health;
-        if(current > maxHealth.Result())
+        if(current >= maxHealth.Result())
         {
             current = maxHealth.Result();
             return true;

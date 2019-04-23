@@ -47,7 +47,7 @@ public abstract class Commandable : MonoBehaviour
             Follow,
             Move,
             Attack,
-            Interact,
+            Harvest,
             Defend
         }
     }

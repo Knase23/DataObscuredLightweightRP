@@ -48,7 +48,7 @@ public class Bullet : MonoBehaviour
     {
         Vector3 directionVelocity = new Vector3();
 
-        directionVelocity = transform.position - target;
+        directionVelocity = target - transform.position;
         directionVelocity.Normalize();
 
         directionVelocity *= speed;
