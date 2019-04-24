@@ -7,6 +7,15 @@ public class Health : MonoBehaviour
     public CustomValue maxHealth = new CustomValue(10);
     float current = 10;
 
+    //Events
+    public delegate void OnTakeDamage();
+    public event OnTakeDamage EventTakeDamage;
+    public delegate void OnDeath();
+    public event OnDeath EventDeath;
+    public delegate void OnReceiveHealth();
+    public event OnReceiveHealth EventReciveHealth;
+
+
     private void Start()
     {
         current = maxHealth.Result();
@@ -21,8 +30,10 @@ public class Health : MonoBehaviour
     {
         damage = Mathf.Abs(damage);
         current -= damage;
+        EventTakeDamage();
         if (current <= 0)
         {
+            EventDeath();
             current = 0;
             return true;
         }
@@ -37,7 +48,8 @@ public class Health : MonoBehaviour
     {
         health = Mathf.Abs(health);
         current += health;
-        if(current >= maxHealth.Result())
+        EventReciveHealth();
+        if (current >= maxHealth.Result())
         {
             current = maxHealth.Result();
             return true;
@@ -59,5 +71,9 @@ public class Health : MonoBehaviour
     public bool CheckIfDead()
     {
         return current <= 0;
+    }
+    public override string ToString()
+    {
+        return current + "/" + maxHealth.Result();
     }
 }

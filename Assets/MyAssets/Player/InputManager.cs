@@ -5,13 +5,22 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public PlayerCharacter player;
+    
+    //Commands for buttons
+    Command buttonSpace;
+    Command buttonOne;
+    Command buttonF;
+    Command buttonLeftMouse;
+    Command move;
+    Command lookAround;
+
     // Start is called before the first frame update
-
-
-    public Vector3 movement;
-
     void Start()
     {
+        buttonSpace = new JumpCommand();
+        buttonOne = new FollowMeDroneCommand();
+        buttonF = new MoveDroneCommand();
+        buttonLeftMouse = new NormalAttackCommand();
     }
 
     // Update is called once per frame
@@ -19,36 +28,99 @@ public class InputManager : MonoBehaviour
     {
         if (Cursor.lockState == CursorLockMode.Locked && !Cursor.visible)
         {
-            player.LookAround(Input.GetAxis("Look X"), Input.GetAxis("Look Y"));
+             lookAround= new LookAroundCommand(Input.GetAxis("Look X"), Input.GetAxis("Look Y"));
         }
         else
         {
-            player.LookAround(0, 0);
+            lookAround = new LookAroundCommand();
         }
+        lookAround.Execute(player);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            player.Jump();
+            buttonSpace.Execute(player);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            player.FollowMeCommand();
+            buttonOne.Execute(player);
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            player.Command();
+            buttonF.Execute(player);
         }
-
     }
     private void FixedUpdate()
     {
         if (Input.GetKey(KeyCode.Mouse0))
         {
-            player.Shoot();
+            buttonLeftMouse.Execute(player);
         }
-
-        player.Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-        movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"), Input.GetAxis("Vertical"));
+        move = new MoveCommand(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        move.Execute(player);
     }
 }
+//Command Pattern stuff, Works only for PlayerCharacters
+#region Commands
+class Command
+{
+    public virtual void Execute(PlayerCharacter actor)
+    {
+
+    }
+}
+class JumpCommand : Command
+{
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.Jump();
+    }
+}
+class FollowMeDroneCommand : Command
+{
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.FollowMeCommand();
+    }
+}
+class MoveDroneCommand : Command
+{
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.MoveDrone();
+    }
+}
+class NormalAttackCommand : Command
+{
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.NormalAttack();
+    }
+}
+class MoveCommand : Command
+{
+    float x, y;
+    public MoveCommand(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.Move(x,y);
+    }
+}
+class LookAroundCommand : Command
+{
+    float x, y;
+    public LookAroundCommand(float x = 0, float y = 0)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.LookAround(x, y);
+    }
+}
+#endregion
+

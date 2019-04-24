@@ -45,4 +45,10 @@ public class PlayerMovement : Movement
     {
         throw new System.NotImplementedException();
     }
+
+    public override bool IsMoving()
+    {
+        
+        return body.velocity.sqrMagnitude != 0;
+    }
 }

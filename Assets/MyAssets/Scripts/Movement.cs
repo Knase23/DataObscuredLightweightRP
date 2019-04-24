@@ -36,4 +36,6 @@ public abstract class Movement : MonoBehaviour
     /// <param name="targetPosition">Position it needs to get near or to</param>
     /// <returns> Gives true if it can move </returns>
     public abstract bool Move(Vector3 targetPosition);
+
+    public abstract bool IsMoving();
 }

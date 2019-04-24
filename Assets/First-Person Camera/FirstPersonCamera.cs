@@ -60,6 +60,17 @@ public class FirstPersonCamera : MonoBehaviour
         }
     }
 
+    public static void UnlockCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    public static void LockCursor()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.Escape))
@@ -67,13 +78,11 @@ public class FirstPersonCamera : MonoBehaviour
 
             if (Cursor.visible)
             {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
+                LockCursor();
             }
             else
             {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                UnlockCursor();
             }
         }
     }

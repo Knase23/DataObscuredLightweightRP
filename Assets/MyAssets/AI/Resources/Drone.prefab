@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2699344491133495115}
   - component: {fileID: 2699344491133495114}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Drone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,14 +91,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: ship7
       objectReference: {fileID: 0}
-    - target: {fileID: -6860895033569716450, guid: 1e559ccf9bbf2fd4884cc4a022155456,
+    - target: {fileID: -927199367670048503, guid: 1e559ccf9bbf2fd4884cc4a022155456,
         type: 3}
-      propertyPath: m_Convex
-      value: 1
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -6860895033569716450, guid: 1e559ccf9bbf2fd4884cc4a022155456,
         type: 3}
       propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6860895033569716450, guid: 1e559ccf9bbf2fd4884cc4a022155456,
+        type: 3}
+      propertyPath: m_Convex
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 1e559ccf9bbf2fd4884cc4a022155456,

@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class DroneAi : Commandable, IInteractable
+public class DroneAi : Commandable
 {
 
     NavMeshAgent agent;
+
+    [Header("Harvest mask")]
+    public LayerMask mask;
+    public float detectionRadius;
+
+
     private void Start()
     {
         NavMeshHit hit;
@@ -44,7 +50,7 @@ public class DroneAi : Commandable, IInteractable
                 //currentRoutine = StartCoroutine(Follow());
                 break;
             case CommandInfo.Command.Harvest:
-                //currentRoutine = StartCoroutine(Follow());
+                currentRoutine = StartCoroutine(Harvest());
                 break;
             case CommandInfo.Command.Defend:
                 //currentRoutine = StartCoroutine(Follow());
@@ -70,7 +76,7 @@ public class DroneAi : Commandable, IInteractable
                 yield return null;
                 if (currentInfo.target?.tag == "FollowPosition")
                 {
-                    if (Vector3.Distance(position, transform.position) <= 1 && transform.parent != currentInfo.target)
+                    if (Vector3.Distance(position, transform.position) <= 1)
                     {
                         transform.parent = currentInfo.target;
                         transform.localPosition = Vector3.zero;
@@ -78,6 +84,7 @@ public class DroneAi : Commandable, IInteractable
                     }
                     else
                     {
+                        transform.parent = null;
                         agent.isStopped = false;
                     }
 
@@ -125,8 +132,70 @@ public class DroneAi : Commandable, IInteractable
         yield break;
     }
 
-    public void OnInteract()
+    public IEnumerator Harvest()
     {
+        yield return new WaitUntil(() => previousRoutine == null);
+        StateStart();
+        Vector3 positionBeforeHarvest = transform.position;
+        VirusNode currentTarget = FindNearestVirusNode();
+        if (agent)
+        {
+            while (currentInfo.command == CommandInfo.Command.Harvest)
+            {
+                if(currentTarget)
+                {
+                    currentTarget = FindNearestVirusNode();
+                }
+                
+                Vector3 position = currentTarget.transform.position;
+                if (!agent.isStopped) agent.SetDestination(position);
 
+
+                if (Vector3.Distance(position, transform.position) <= 1)
+                {
+                    agent.isStopped = true;
+                }
+                else
+                {
+                    agent.isStopped = false;
+                }
+
+                yield return null;
+            }
+        }
+        agent.isStopped = false;
+        Debug.Log("End Harvest Mode");
+        StateEnd();
+        yield break;
     }
+
+    VirusNode FindNearestVirusNode()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, detectionRadius, mask);
+
+        VirusNode closest = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (var item in colliders)
+        {
+            VirusNode node = item.GetComponent<VirusNode>();
+            if(closest)
+            {
+                float distance = Vector3.Distance(transform.position, node.transform.position);
+                if(distance < closestDistance)
+                {
+                    closest = node;
+                    closestDistance = distance;
+                }
+            }
+            else
+            {
+                closestDistance = Vector3.Distance(transform.position, node.transform.position);
+                closest = node;
+            }
+        }
+
+        return closest;
+    }
+
 }

@@ -5,10 +5,18 @@ using UnityEngine.AI;
 
 public class AiMovement : Movement
 { 
-    NavMeshAgent agent;
-    public List<GameObject> pointsToMoveTo = new List<GameObject>();
+    protected NavMeshAgent agent;
+    public Transform transformParentForPointsToGoTo;
+    public List<Transform> pointsToMoveTo = new List<Transform>();
     private void Start()
     {
+        if(transformParentForPointsToGoTo.childCount > 0)
+        {
+            for (int i = 0; i < transformParentForPointsToGoTo.childCount; i++)
+            {
+                pointsToMoveTo.Add(transformParentForPointsToGoTo.GetChild(i));
+            }
+        }
         NavMeshHit hit;
         if (NavMesh.SamplePosition(transform.position, out hit, 10, NavMesh.AllAreas))
         {
@@ -22,16 +30,22 @@ public class AiMovement : Movement
         {
             Debug.Log("Missed NavMesh");
         }
+        OnStart();
     }
 
     public override bool Move()
     {
         if (agent.remainingDistance >= 1)
             return false;
-        if (pointsToMoveTo.Count == 0)
+        
+        if (pointsToMoveTo.Count > 0)
+        {
+            agent.SetDestination(pointsToMoveTo[Random.Range(0, pointsToMoveTo.Count)].position);
+        }
+        else
+        {
             return false;
-
-        agent.SetDestination(pointsToMoveTo[Random.Range(0, pointsToMoveTo.Count)].transform.position);
+        }
         return true;
     }
 
@@ -44,8 +58,26 @@ public class AiMovement : Movement
     {
         if (agent.remainingDistance >= 1)
             return false;
-
         agent.SetDestination(targetPosition);
         return true;
+    }
+    public virtual void OnStart()
+    {
+
+    }
+    public void CheckParentFotPointsToGoTo()
+    {
+        if (transformParentForPointsToGoTo == null)
+            return;
+
+        for (int i = 0; i < transformParentForPointsToGoTo.childCount; i++)
+        {
+            pointsToMoveTo.Add(transformParentForPointsToGoTo.GetChild(i));
+        }
+    }
+
+    public override bool IsMoving()
+    {
+        return !agent.isStopped;
     }
 }

@@ -32,7 +32,7 @@ namespace Tests
             testWeapon =  weaponObject.AddComponent<Weapon>();
             testWeapon.playerCamera = camera;
             testWeapon.shootOrigin = testWeapon.transform;
-            testWeapon.damage = new CustomValue(30);
+            testWeapon.attackDamage = new CustomValue(30);
             testWeapon.bulletPrefab = Resources.Load<GameObject>("Bullet");
 
 
@@ -49,7 +49,7 @@ namespace Tests
         [UnityTest]
         public IEnumerator CanShoot()
         {
-            if(testWeapon.Shoot())
+            if(testWeapon.ExecuteAttack())
             {
                 Assert.Pass();
             }
@@ -68,7 +68,7 @@ namespace Tests
             float enemyStartHealth = 10;
             float enemyHealth = 10;
 
-            if (!testWeapon.Shoot())
+            if (!testWeapon.ExecuteAttack())
             {
                 Assert.Fail("Failed to shoot");
             }

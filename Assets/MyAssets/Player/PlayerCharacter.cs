@@ -1,29 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 [RequireComponent(typeof(Health))]
 public class PlayerCharacter : MonoBehaviour 
 {
     Health health;
-    Weapon weaponMechanic;
+    Attack normalAttack;
     FirstPersonCamera firstPersonCamera;
     Movement movement;
     PlayerJump jump;
     PlayerCommand command;
+
+
+    public delegate void PlayerDied();
+    public static event PlayerDied OnPlayerDeath;
+
+    public TextMeshProUGUI HealthText;
+
+
     // Start is called before the first frame update
     void Start()
     {
         tag = "Player";
         health = GetComponent<Health>();
+        health.EventTakeDamage += OnDamageTaken;
+        health.EventDeath += OnDeath;
+
         firstPersonCamera = GetComponent<FirstPersonCamera>();
-        weaponMechanic = GetComponentInChildren<Weapon>();
+        normalAttack = GetComponentInChildren<Weapon>();
         movement = GetComponent<Movement>();
         jump = GetComponent<PlayerJump>();
         command = GetComponent<PlayerCommand>();
+
+        HealthText.text = health.ToString();
     }
-    public void Shoot()
+
+    #region STUFF_FOR_INPUT_MANAGER
+    public void NormalAttack()
     {
-        weaponMechanic.Shoot();
+        normalAttack.ExecuteAttack();
     }
     public void LookAround(float x, float y)
     {
@@ -37,20 +54,28 @@ public class PlayerCharacter : MonoBehaviour
     {
         jump.Jump();
     }
-    public void Command()
+    public void MoveDrone()
     {
-        command.OutsideCommand();
+        command.MoveAgent();
     }
     public void FollowMeCommand()
     {
         command.FollowMe();
     }
+    #endregion
 
-
-    public Transform GetFirstPersonCameraJoint()
+    //Functions assosiated with Events/Delegates
+    public void OnDamageTaken()
     {
-        return firstPersonCamera.playerCamera;
+        HealthText.text = health.ToString();
+        //Debug.Log("Dead",gameObject);
     }
+    public void OnDeath()
+    {
+        //Debug.Log("Damage Taken", gameObject);
+        OnPlayerDeath();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Bullet")
@@ -59,15 +84,7 @@ public class PlayerCharacter : MonoBehaviour
 
             if (!bullet.isFromPlayer())
             {
-                if (health.TakeDamage(bullet.GetDamage()))
-                {
-                    // Enemy dies
-
-                    Debug.Log("You Died");
-                    //Replace with something else;
-                    gameObject.SetActive(false);
-
-                }
+                health.TakeDamage(bullet.GetDamage());
                 Destroy(other.gameObject);
             }
 
