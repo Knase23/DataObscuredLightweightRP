@@ -26,13 +26,18 @@ public abstract class Attack : MonoBehaviour
 
     public virtual bool ApplyEffects(Skill effect)
     {
-        switch (effect.Name)
+        AttackSkill skill = effect as AttackSkill;
+        if(skill == null)
         {
-            case "Damage":
-                attackDamage += effect.Effect<CustomValue>();
+            return false;
+        }
+        switch (skill.applyTo)
+        {
+            case AttackSkill.ApplyTo.Attack:
+                attackDamage += effect.Effect();
                 return true;
-            case "Speed":
-                attackSpeed += effect.Effect<CustomValue>();
+            case AttackSkill.ApplyTo.Speed:
+                attackSpeed += effect.Effect();
                 return true;
             default:
                 break;

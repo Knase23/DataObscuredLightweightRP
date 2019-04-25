@@ -10,8 +10,10 @@ public class Health : MonoBehaviour
     //Events
     public delegate void OnTakeDamage();
     public event OnTakeDamage EventTakeDamage;
+
     public delegate void OnDeath();
     public event OnDeath EventDeath;
+
     public delegate void OnReceiveHealth();
     public event OnReceiveHealth EventReciveHealth;
 
@@ -33,8 +35,10 @@ public class Health : MonoBehaviour
         EventTakeDamage();
         if (current <= 0)
         {
-            EventDeath();
+            
             current = 0;
+            EventTakeDamage();
+            EventDeath();
             return true;
         }
         return false;
@@ -48,13 +52,15 @@ public class Health : MonoBehaviour
     {
         health = Mathf.Abs(health);
         current += health;
-        EventReciveHealth();
+        
         if (current >= maxHealth.Result())
         {
             current = maxHealth.Result();
+            EventReciveHealth();
             return true;
         }
-         return false;
+        EventReciveHealth();
+        return false;
     }
     /// <summary>
     /// Gives the current Health;
@@ -74,6 +80,12 @@ public class Health : MonoBehaviour
     }
     public override string ToString()
     {
-        return current + "/" + maxHealth.Result();
+        return current + "/" + maxHealth.Result() + " HP";
+    }
+    public void ApplyEffect(CustomValue amount)
+    {
+        maxHealth += amount;
+        current += amount.Result();
+        EventReciveHealth();
     }
 }

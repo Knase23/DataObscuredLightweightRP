@@ -13,8 +13,15 @@ public class DroneAi : Commandable
     public float detectionRadius;
 
 
+    public CustomValue InteractSpeed = new CustomValue(5);
+    private float interactTimer;
+    private bool interacting;
+    public LayerMask interactLayers;
+    private Vector3 interactDirection = new Vector3(0,0,1);
+    private Vector3 interactOrign;
     private void Start()
     {
+        interactOrign = transform.position + Vector3.up;
         NavMeshHit hit;
         if (NavMesh.SamplePosition(transform.position, out hit, 10, NavMesh.AllAreas))
         {
@@ -27,6 +34,30 @@ public class DroneAi : Commandable
         {
             Debug.Log("Missed NavMesh");
         }
+        Command(new CommandInfo(CommandInfo.Command.Follow,target:transform.parent));
+
+    }
+
+    public bool ApplyEffect(Skill effect)
+    {
+        DroneSkill skill = effect as DroneSkill;
+        if (skill == null)
+            return false;
+
+        switch (skill.applyTo)
+        {
+            case DroneSkill.ApplyTo.InteractSpeed:
+                InteractSpeed += skill.value;
+                return true;
+            case DroneSkill.ApplyTo.MovementSpeed:
+                return true;
+            case DroneSkill.ApplyTo.HarvestAmountBoost:
+                return true;
+            default:
+                break;
+        }
+
+        return false;
     }
 
     public override void Command(CommandInfo info)
@@ -103,7 +134,7 @@ public class DroneAi : Commandable
     {
         yield return new WaitUntil(() => previousRoutine == null);
         StateStart();
-
+        transform.parent = null;
         if (agent)
         {
             while (currentInfo.command == CommandInfo.Command.Move)
@@ -136,6 +167,7 @@ public class DroneAi : Commandable
     {
         yield return new WaitUntil(() => previousRoutine == null);
         StateStart();
+        transform.parent = null;
         Vector3 positionBeforeHarvest = transform.position;
         VirusNode currentTarget = FindNearestVirusNode();
         if (agent)
@@ -144,20 +176,51 @@ public class DroneAi : Commandable
             {
                 if(currentTarget)
                 {
-                    currentTarget = FindNearestVirusNode();
+                    if (currentTarget.harvested)
+                    {
+                        currentTarget = FindNearestVirusNode();
+                    }
                 }
-                
-                Vector3 position = currentTarget.transform.position;
-                if (!agent.isStopped) agent.SetDestination(position);
 
-
-                if (Vector3.Distance(position, transform.position) <= 1)
+                if (currentTarget)
                 {
-                    agent.isStopped = true;
+                    Vector3 position = currentTarget.transform.position;
+                    agent.SetDestination(position);
+
+                    if (agent.remainingDistance <= 1)
+                    {
+                        if (interacting)
+                        {
+                            if (interactTimer <= 0)
+                            {
+                                interactOrign = transform.position + (Vector3.up * 0.61f);
+                                interactDirection = currentTarget.transform.position - interactOrign;
+
+                                Ray ray = new Ray(interactOrign, interactDirection);
+                                RaycastHit hit;
+                                if (Physics.Raycast(ray, out hit, 10, interactLayers))
+                                {
+                                    Debug.Log("Drone Interacting");
+                                    if (hit.collider.gameObject == currentTarget.gameObject)
+                                    {
+                                        currentTarget.OnInteract();
+                                    }
+                                }
+                                interacting = false;
+
+                            }
+                            interactTimer -= Time.deltaTime;
+                        }
+                        else
+                        {
+                            interacting = true;
+                            interactTimer = InteractSpeed.Result();
+                        }
+                    }
                 }
                 else
                 {
-                    agent.isStopped = false;
+                    currentTarget = FindNearestVirusNode();
                 }
 
                 yield return null;
@@ -179,23 +242,30 @@ public class DroneAi : Commandable
         foreach (var item in colliders)
         {
             VirusNode node = item.GetComponent<VirusNode>();
-            if(closest)
+            if (!node.harvested)
             {
-                float distance = Vector3.Distance(transform.position, node.transform.position);
-                if(distance < closestDistance)
+                if (closest)
                 {
-                    closest = node;
-                    closestDistance = distance;
+                    float distance = Vector3.Distance(transform.position, node.transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closest = node;
+                        closestDistance = distance;
+                    }
                 }
-            }
-            else
-            {
-                closestDistance = Vector3.Distance(transform.position, node.transform.position);
-                closest = node;
+                else
+                {
+                    closestDistance = Vector3.Distance(transform.position, node.transform.position);
+                    closest = node;
+                }
             }
         }
 
         return closest;
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawRay(interactOrign, interactDirection);
     }
 
 }

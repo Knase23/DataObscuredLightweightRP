@@ -5,12 +5,14 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public PlayerCharacter player;
-    
+
     //Commands for buttons
     Command buttonSpace;
     Command buttonOne;
     Command buttonF;
     Command buttonLeftMouse;
+    Command buttonTwo;
+    Command buttonT;
     Command move;
     Command lookAround;
 
@@ -19,8 +21,10 @@ public class InputManager : MonoBehaviour
     {
         buttonSpace = new JumpCommand();
         buttonOne = new FollowMeDroneCommand();
+        buttonTwo = new DroneChangeModeCommand();
         buttonF = new MoveDroneCommand();
         buttonLeftMouse = new NormalAttackCommand();
+        buttonT = new SkillTreeCommand();
     }
 
     // Update is called once per frame
@@ -28,7 +32,7 @@ public class InputManager : MonoBehaviour
     {
         if (Cursor.lockState == CursorLockMode.Locked && !Cursor.visible)
         {
-             lookAround= new LookAroundCommand(Input.GetAxis("Look X"), Input.GetAxis("Look Y"));
+            lookAround = new LookAroundCommand(Input.GetAxis("Look X"), Input.GetAxis("Look Y"));
         }
         else
         {
@@ -44,9 +48,18 @@ public class InputManager : MonoBehaviour
         {
             buttonOne.Execute(player);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            buttonTwo.Execute(player);
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
             buttonF.Execute(player);
+        }
+
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            buttonT.Execute(player);
         }
     }
     private void FixedUpdate()
@@ -82,6 +95,13 @@ class FollowMeDroneCommand : Command
         actor.FollowMeCommand();
     }
 }
+class DroneChangeModeCommand : Command
+{
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.ChangeModeCommand();
+    }
+}
 class MoveDroneCommand : Command
 {
     public override void Execute(PlayerCharacter actor)
@@ -106,7 +126,7 @@ class MoveCommand : Command
     }
     public override void Execute(PlayerCharacter actor)
     {
-        actor.Move(x,y);
+        actor.Move(x, y);
     }
 }
 class LookAroundCommand : Command
@@ -120,6 +140,14 @@ class LookAroundCommand : Command
     public override void Execute(PlayerCharacter actor)
     {
         actor.LookAround(x, y);
+    }
+}
+
+class SkillTreeCommand : Command
+{
+    public override void Execute(PlayerCharacter actor)
+    {
+        actor.SkillTree();
     }
 }
 #endregion

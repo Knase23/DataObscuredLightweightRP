@@ -12,20 +12,24 @@ public class PlayerCharacter : MonoBehaviour
     Movement movement;
     PlayerJump jump;
     PlayerCommand command;
-
+    PlayerVirusData virusData;
+    SkillTree skillTree;
+    DroneAi drone;
 
     public delegate void PlayerDied();
     public static event PlayerDied OnPlayerDeath;
 
     public TextMeshProUGUI HealthText;
-
+    public TextMeshProUGUI ResourceText;
+   
 
     // Start is called before the first frame update
     void Start()
     {
         tag = "Player";
         health = GetComponent<Health>();
-        health.EventTakeDamage += OnDamageTaken;
+        health.EventTakeDamage += UpdateHealthText;
+        health.EventReciveHealth += UpdateHealthText;
         health.EventDeath += OnDeath;
 
         firstPersonCamera = GetComponent<FirstPersonCamera>();
@@ -33,8 +37,58 @@ public class PlayerCharacter : MonoBehaviour
         movement = GetComponent<Movement>();
         jump = GetComponent<PlayerJump>();
         command = GetComponent<PlayerCommand>();
+        skillTree = GetComponent<SkillTree>();
+
+        drone = FindObjectOfType<DroneAi>();
+
+        virusData = GetComponent<PlayerVirusData>();
+        Debug.Log(virusData);
+
+
+        PlayerVirusData.OnResourceChanged += PlayerVirusData_OnResourceChanged;
 
         HealthText.text = health.ToString();
+        ResourceText.text = virusData.ToString();
+    }
+
+    private void PlayerVirusData_OnResourceChanged()
+    {
+        ResourceText.text = virusData.ToString();
+    }
+
+    public bool ApplyEffect(Skill skill)
+    {
+        //Weapon
+        if(normalAttack.ApplyEffects(skill))
+        {
+            return true;
+        }
+        
+
+        //Drone
+        if(drone.ApplyEffect(skill))
+        {
+            return true;
+        }
+
+        //Character
+        CharacterSkill cSkill = skill as CharacterSkill;
+        if(cSkill == null)
+        {
+            return false;
+        }
+        switch (cSkill.applyTo)
+        {
+            case CharacterSkill.ApplyTo.Health:
+                health.ApplyEffect(cSkill.value);
+                return true;
+            case CharacterSkill.ApplyTo.Speed:
+
+                return true;
+            default:
+                break;
+        }
+        return false;
     }
 
     #region STUFF_FOR_INPUT_MANAGER
@@ -62,10 +116,28 @@ public class PlayerCharacter : MonoBehaviour
     {
         command.FollowMe();
     }
+    public void ChangeModeCommand()
+    {
+        command.ChangeMode();
+    }
+    public void SkillTree()
+    {
+        if (skillTree.UpdateSkillTreeCanvas())
+        {
+            FirstPersonCamera.UnlockCursor();
+            //LockMovement if playing with controller
+
+        }
+        else
+        {
+            FirstPersonCamera.LockCursor();
+            //UnlockMovement if playing with controller
+        }
+    }
     #endregion
 
     //Functions assosiated with Events/Delegates
-    public void OnDamageTaken()
+    public void UpdateHealthText()
     {
         HealthText.text = health.ToString();
         //Debug.Log("Dead",gameObject);

@@ -9,7 +9,8 @@ public class EnemySpawner : MonoBehaviour
     List<Vector3> spawnPositions = new List<Vector3>();
 
     public List<GameObject> optionsOfEnemies = new List<GameObject>();
-
+    private float timeToTake = 1.5f;
+    private float timer = 0;
     private void Start()
     {
         if (pointsToRespawnOn)
@@ -20,6 +21,16 @@ public class EnemySpawner : MonoBehaviour
             }
 
         }
+    }
+
+    private void Update()
+    {
+        if(timer <= 0 && transform.childCount < 10)
+        {
+            SpawnEnemy(indexSpawnPosition: Random.Range(0, spawnPositions.Count));
+            timer = timeToTake;
+        }
+        timer -= Time.deltaTime;
     }
 
     public void SpawnEnemy(int enemyOption = 0, int indexSpawnPosition = 0)

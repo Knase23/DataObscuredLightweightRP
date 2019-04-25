@@ -27,11 +27,22 @@ public class Weapon : Attack
     /// <returns> If it suceeded </returns>
     public override bool ApplyEffects(Skill effect)
     {
-        bool suceeded = base.ApplyEffects(effect);
-        switch (effect.Name)
+        if(base.ApplyEffects(effect))
         {
-            case "BulletSpeed":
-                bulletSpeed += effect.Effect<CustomValue>();
+            return true;
+        }
+
+        WeaponSkill skill = effect as WeaponSkill;
+        if (skill == null)
+        {
+            return false;
+        }
+
+
+        switch (skill.applyTo)
+        {
+            case WeaponSkill.ApplyTo.BulletSpeed:
+                bulletSpeed += effect.Effect();
             return true;
             default:
                 break;

@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
     Attack attack;
     Movement movement;
     Health health;
+    Renderer renderer;
     protected Animator animator;
     public States currentState;
     public float waitTime = 1;
@@ -72,7 +73,6 @@ public class Enemy : MonoBehaviour
         }
         SetWalking(movement.IsMoving());
     }
-
     //Functions assosiated with Events/Delegates
     public void OnDamageTaken()
     {
@@ -82,8 +82,13 @@ public class Enemy : MonoBehaviour
     public void OnDeath()
     {
         animator.SetBool("Dead", true);
+        
         //Debug.Log("Dead", gameObject);
-        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
+    private void OnDestroy()
+    {
+        PlayerVirusData.instance.AddResource(1);
     }
 
     public void SetWalking(bool state)
