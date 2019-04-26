@@ -93,13 +93,14 @@ public class DroneAi : Commandable
 
     public IEnumerator Follow()
     {
-        yield return new WaitUntil(() => previousRoutine == null);
+        
         StateStart();
 
         if (agent)
         {
             while (currentInfo.command == CommandInfo.Command.Follow)
             {
+                StateStart();
                 Vector3 position = currentInfo.target.position;
 
                 if (!agent.isStopped) agent.SetDestination(position);                
@@ -132,14 +133,13 @@ public class DroneAi : Commandable
 
     public IEnumerator Move()
     {
-        yield return new WaitUntil(() => previousRoutine == null);
         StateStart();
         transform.parent = null;
         if (agent)
         {
             while (currentInfo.command == CommandInfo.Command.Move)
             {
-                
+                StateStart();
                 Vector3 position = currentInfo.point;
 
                 if (!agent.isStopped) agent.SetDestination(position);
@@ -165,7 +165,6 @@ public class DroneAi : Commandable
 
     public IEnumerator Harvest()
     {
-        yield return new WaitUntil(() => previousRoutine == null);
         StateStart();
         transform.parent = null;
         Vector3 positionBeforeHarvest = transform.position;
@@ -174,7 +173,8 @@ public class DroneAi : Commandable
         {
             while (currentInfo.command == CommandInfo.Command.Harvest)
             {
-                if(currentTarget)
+                StateStart();
+                if (currentTarget)
                 {
                     if (currentTarget.harvested)
                     {

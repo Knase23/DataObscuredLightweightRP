@@ -1,86 +1,86 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
+﻿//using System.Collections;
+//using System.Collections.Generic;
+//using NUnit.Framework;
+//using UnityEngine;
+//using UnityEngine.TestTools;
 
-namespace Tests
-{
-    public class WeaponTests
-    {
-        GameObject weaponObject;
-        Weapon testWeapon;
-
-
-        Vector3 targetPosition;
-
-        GameObject enemy;
+//namespace Tests
+//{
+//    public class WeaponTests
+//    {
+//        GameObject weaponObject;
+//        Weapon testWeapon;
 
 
-        [SetUp]
-        public void UnitySetup()
-        {
-            weaponObject = new GameObject();
-            weaponObject.tag = "Player";
-            GameObject gun = Resources.Load<GameObject>("Simple Gun");
-            gun = GameObject.Instantiate(gun);
-            gun.transform.parent = weaponObject.transform;
+//        Vector3 targetPosition;
 
-            GameObject obj = new GameObject();
-            Camera camera = obj.AddComponent<Camera>();
-
-            testWeapon =  weaponObject.AddComponent<Weapon>();
-            testWeapon.playerCamera = camera;
-            testWeapon.shootOrigin = testWeapon.transform;
-            testWeapon.attackDamage = new CustomValue(30);
-            testWeapon.bulletPrefab = Resources.Load<GameObject>("Bullet");
+//        GameObject enemy;
 
 
-            enemy = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            enemy.transform.position = testWeapon.transform.position + testWeapon.transform.forward * 5;
-            enemy.transform.rotation = Quaternion.Euler(-90, 0, 0);
-            enemy.AddComponent<Enemy>();
-            enemy.GetComponent<MeshCollider>().convex = true;
-            enemy.GetComponent<MeshCollider>().isTrigger = true;
+//        [SetUp]
+//        public void UnitySetup()
+//        {
+//            weaponObject = new GameObject();
+//            weaponObject.tag = "Player";
+//            GameObject gun = Resources.Load<GameObject>("Simple Gun");
+//            gun = GameObject.Instantiate(gun);
+//            gun.transform.parent = weaponObject.transform;
 
-            Time.timeScale = 10;
-        }
+//            GameObject obj = new GameObject();
+//            Camera camera = obj.AddComponent<Camera>();
 
-        [UnityTest]
-        public IEnumerator CanShoot()
-        {
-            if(testWeapon.ExecuteAttack())
-            {
-                Assert.Pass();
-            }
-            else
-            {
-                Assert.Fail();
-            }
+//            testWeapon =  weaponObject.AddComponent<Weapon>();
+//            testWeapon.playerCamera = camera;
+//            testWeapon.shootOrigin = testWeapon.transform;
+//            testWeapon.attackDamage = new CustomValue(30);
+//            testWeapon.bulletPrefab = Resources.Load<GameObject>("Bullet");
 
-            yield return null;
-        }
 
-        [UnityTest]
-        public IEnumerator DoesDamageToEnemy()
-        {
+//            enemy = GameObject.CreatePrimitive(PrimitiveType.Plane);
+//            enemy.transform.position = testWeapon.transform.position + testWeapon.transform.forward * 5;
+//            enemy.transform.rotation = Quaternion.Euler(-90, 0, 0);
+//            enemy.AddComponent<Enemy>();
+//            enemy.GetComponent<MeshCollider>().convex = true;
+//            enemy.GetComponent<MeshCollider>().isTrigger = true;
 
-            float enemyStartHealth = 10;
-            float enemyHealth = 10;
+//            Time.timeScale = 10;
+//        }
 
-            if (!testWeapon.ExecuteAttack())
-            {
-                Assert.Fail("Failed to shoot");
-            }
-            yield return new WaitForSeconds(2);
+//        [UnityTest]
+//        public IEnumerator CanShoot()
+//        {
+//            if(testWeapon.ExecuteAttack())
+//            {
+//                Assert.Pass();
+//            }
+//            else
+//            {
+//                Assert.Fail();
+//            }
 
-            enemyHealth = enemy.GetComponent<Health>().GetCurrent();
+//            yield return null;
+//        }
 
-            Debug.Log(enemyHealth);
+//        [UnityTest]
+//        public IEnumerator DoesDamageToEnemy()
+//        {
 
-            Assert.Less(enemyHealth, enemyStartHealth);
+//            float enemyStartHealth = 10;
+//            float enemyHealth = 10;
 
-            yield return null;
-        }
-    }
-}
+//            if (!testWeapon.ExecuteAttack())
+//            {
+//                Assert.Fail("Failed to shoot");
+//            }
+//            yield return new WaitForSeconds(2);
+
+//            enemyHealth = enemy.GetComponent<Health>().GetCurrent();
+
+//            Debug.Log(enemyHealth);
+
+//            Assert.Less(enemyHealth, enemyStartHealth);
+
+//            yield return null;
+//        }
+//    }
+//}

@@ -20,8 +20,8 @@ public class HealPlayerOverTimeIfHaveChild : MonoBehaviour
         {
             if (timer <= 0)
             {
-
                 playerHealth.ReceiveHealth(1);
+                timer = timerToTake;
             }
             timer -= Time.deltaTime;
         }

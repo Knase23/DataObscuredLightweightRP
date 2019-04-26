@@ -19,6 +19,7 @@ public class InputManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 1;
         buttonSpace = new JumpCommand();
         buttonOne = new FollowMeDroneCommand();
         buttonTwo = new DroneChangeModeCommand();
@@ -72,6 +73,7 @@ public class InputManager : MonoBehaviour
         move.Execute(player);
     }
 }
+
 //Command Pattern stuff, Works only for PlayerCharacters
 #region Commands
 class Command
