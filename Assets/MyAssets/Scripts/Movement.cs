@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Movement : MonoBehaviour
 {
     public CustomValue speedValue = new CustomValue(10);
-
+    public float height;
     public void SetSpeedValue(CustomValue value)
     {
         speedValue = value;
@@ -17,6 +17,10 @@ public abstract class Movement : MonoBehaviour
     public float GetSpeedValueResult()
     {
         return speedValue.Result();
+    }
+    public virtual void ApplyEffect(CustomValue amount)
+    {
+        speedValue += amount;
     }
     /// <summary>
     /// General Movment if it does not need any params

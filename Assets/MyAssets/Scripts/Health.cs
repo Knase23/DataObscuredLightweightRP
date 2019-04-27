@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    public bool invincible;
     public CustomValue maxHealth = new CustomValue(10);
     float current = 10;
 
     //Events
-    public delegate void OnTakeDamage();
+    public delegate void OnTakeDamage(float amount);
     public event OnTakeDamage EventTakeDamage;
 
     public delegate void OnDeath();
     public event OnDeath EventDeath;
 
-    public delegate void OnReceiveHealth();
+    public delegate void OnReceiveHealth(float amount);
     public event OnReceiveHealth EventReciveHealth;
     private void Awake()
     {
@@ -34,13 +35,15 @@ public class Health : MonoBehaviour
     public bool TakeDamage(float damage)
     {
         damage = Mathf.Abs(damage);
-        current -= damage;
-        EventTakeDamage();
+        if(!invincible)
+            current -= damage;
+
+        EventTakeDamage(damage);
         if (current <= 0)
         {
             
             current = 0;
-            EventTakeDamage();
+            EventTakeDamage(-1);
             EventDeath();
             return true;
         }
@@ -55,14 +58,13 @@ public class Health : MonoBehaviour
     {
         health = Mathf.Abs(health);
         current += health;
-        
+        EventReciveHealth(health);
         if (current >= maxHealth.Result())
         {
             current = maxHealth.Result();
-            EventReciveHealth();
+            EventReciveHealth(0);
             return true;
         }
-        EventReciveHealth();
         return false;
     }
     /// <summary>
@@ -89,6 +91,6 @@ public class Health : MonoBehaviour
     {
         maxHealth += amount;
         current += amount.Result();
-        EventReciveHealth();
+        EventReciveHealth(amount.Result());
     }
 }

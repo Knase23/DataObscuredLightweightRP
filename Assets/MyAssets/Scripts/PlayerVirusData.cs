@@ -6,9 +6,16 @@ public class PlayerVirusData : MonoBehaviour
 {
     public static PlayerVirusData instance;
 
-    public delegate void ResourceChanged();
+    public delegate void DataChanged();
+    public static event DataChanged OnResourceChanged;
 
-    public static event ResourceChanged OnResourceChanged;
+    public delegate void GivenData(float amount);
+    public static event GivenData OnGatherData;
+
+
+
+
+
 
     private void Awake()
     {
@@ -32,7 +39,7 @@ public class PlayerVirusData : MonoBehaviour
     public void AddResource(float amount)
     {
         resources += amount;
-
+        OnGatherData(amount);
         OnResourceChanged();
     }
 

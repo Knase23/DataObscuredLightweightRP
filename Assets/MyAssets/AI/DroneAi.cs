@@ -19,6 +19,8 @@ public class DroneAi : Commandable
     public LayerMask interactLayers;
     private Vector3 interactDirection = new Vector3(0, 0, 1);
     private Vector3 interactOrign;
+
+
     private void Start()
     {
         interactOrign = transform.position + Vector3.up;
@@ -29,6 +31,7 @@ public class DroneAi : Commandable
             agent = gameObject.AddComponent<NavMeshAgent>();
             agent.radius = 0.2f;
             agent.height = 1;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
         }
         else
         {
@@ -50,6 +53,7 @@ public class DroneAi : Commandable
                 InteractSpeed += skill.value;
                 return true;
             case DroneSkill.ApplyTo.MovementSpeed:
+                agent.speed += skill.value.Result();
                 return true;
             case DroneSkill.ApplyTo.HarvestAmountBoost:
                 return true;
@@ -117,16 +121,12 @@ public class DroneAi : Commandable
             transform.parent = null;
             agent.isStopped = false;
         }
-        //Debug.Log("End Follow Command");
-
     }
 
     public void Move()
     {
         if (agent)
         {
-
-            StateStart();
             Vector3 position = currentInfo.point;
 
             if (!agent.isStopped) agent.SetDestination(position);
@@ -152,25 +152,17 @@ public class DroneAi : Commandable
         VirusNode currentTarget = FindNearestVirusNode();
         if (agent)
         {
-            if (currentTarget)
-            {
-                if (currentTarget.harvested)
-                {
-                    currentTarget = FindNearestVirusNode();
-                }
-            }
-
-            if (currentTarget)
+            if (currentTarget && !currentTarget.harvested)
             {
                 Vector3 position = currentTarget.transform.position;
                 agent.SetDestination(position);
-                Debug.Log("Going to location!");
+
                 if (agent.remainingDistance <= 1)
                 {
-                    Debug.Log("Good distance from  Node");
+
                     if (interacting)
                     {
-                        Debug.Log("Start To Interact Timer");
+
                         if (interactTimer <= 0)
                         {
                             interactOrign = transform.position + (Vector3.up * 0.61f);
@@ -180,7 +172,6 @@ public class DroneAi : Commandable
                             RaycastHit hit;
                             if (Physics.Raycast(ray, out hit, 10, interactLayers))
                             {
-                                Debug.Log("Drone Interacting");
                                 if (hit.collider.gameObject == currentTarget.gameObject)
                                 {
                                     currentTarget.OnInteract();
@@ -203,9 +194,8 @@ public class DroneAi : Commandable
             else
             {
                 currentTarget = FindNearestVirusNode();
+                agent.SetDestination(currentInfo.target.position);
             }
-
-
         }
         agent.isStopped = false;
     }

@@ -13,7 +13,7 @@ public class PlayerCommand : MonoBehaviour
 
     public void ChangeMode()
     {
-        agent.Command(new Commandable.CommandInfo(Commandable.CommandInfo.Command.Harvest));
+        agent.Command(new Commandable.CommandInfo(Commandable.CommandInfo.Command.Harvest, target: followPosition));
     }
     public void MoveAgent()
     {

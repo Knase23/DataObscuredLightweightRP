@@ -13,6 +13,14 @@ public class Enemy : MonoBehaviour
     public States currentState;
     public float waitTime = 1;
     float idleTimer;
+
+
+    public delegate void Killed();
+    public static event Killed OnKilled;
+    public delegate void DamageTaken(float amount);
+    public static event DamageTaken OnHit;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,7 +86,7 @@ public class Enemy : MonoBehaviour
         SetWalking(movement.IsMoving());
     }
     //Functions assosiated with Events/Delegates
-    public void OnDamageTaken()
+    public void OnDamageTaken(float amount)
     {
         animator.SetTrigger("TakeDamage");
         StartCoroutine(BlinkEmissionColor());
@@ -91,12 +99,10 @@ public class Enemy : MonoBehaviour
         mat.SetColor("_EmissionColor", baseColor);
 
     }
-
-
     public void OnDeath()
     {
         animator.SetBool("Dead", true);
-        
+        OnKilled();
         //Debug.Log("Dead", gameObject);
         Destroy(gameObject);
     }
@@ -128,6 +134,7 @@ public class Enemy : MonoBehaviour
             if (bullet.isFromPlayer())
             {
                 health.TakeDamage(bullet.GetDamage());
+                OnHit(bullet.GetDamage());
                 Destroy(other.gameObject);
             }
         }

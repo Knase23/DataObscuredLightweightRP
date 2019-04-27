@@ -10,6 +10,9 @@ public class SkillTree : MonoBehaviour
     private List<bool> skilledApply = new List<bool>();
     PlayerCharacter player;
 
+    public delegate void BoughtSkill();
+    public static event BoughtSkill OnBoughtSkill;
+
     private void Start()
     {
         player = GetComponent<PlayerCharacter>();
@@ -20,6 +23,7 @@ public class SkillTree : MonoBehaviour
     {
         boughtSkills.Add(skill);
         skilledApply.Add(false);
+        OnBoughtSkill();
         ApplySkills();
     }
     void RemoveSkill(int index)

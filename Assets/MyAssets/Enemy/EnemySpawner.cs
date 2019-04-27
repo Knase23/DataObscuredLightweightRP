@@ -25,7 +25,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        if(timer <= 0 && transform.childCount < 10)
+        if (timer <= 0 && transform.childCount < 10)
         {
             SpawnEnemy(indexSpawnPosition: Random.Range(0, spawnPositions.Count));
             timer = timeToTake;
@@ -55,7 +55,7 @@ public class EnemySpawner : MonoBehaviour
         #endregion
 
         #region Handle_Error_Cases
-        if(spawnPositions.Count == 0)
+        if (spawnPositions.Count == 0)
         {
             return;
         }
@@ -79,6 +79,57 @@ public class EnemySpawner : MonoBehaviour
     public List<GameObject> GetListOfAvalibleOptionsOfEnemies()
     {
         return optionsOfEnemies;
+    }
+
+    public List<int> GetListOfValideSpawnLocations(Transform player, float validDistance, bool checkLineOfSight)
+    {
+        bool[] validPositions = new bool[spawnPositions.Count];
+        for (int i = 0; i < validPositions.Length; i++)
+        {
+            validPositions[i] = true;
+        }
+        if (validDistance > 0)
+        {
+            for (int i = 0; i < spawnPositions.Count; i++)
+            {
+                if (Vector3.Distance(spawnPositions[i], player.position) < validDistance)
+                {
+                    validPositions[i] = false;
+                }
+            }
+        }
+
+        if (checkLineOfSight)
+        {
+            for (int i = 0; i < spawnPositions.Count; i++)
+            {
+                if (validPositions[i])
+                {
+                    RaycastHit hit;
+                    if (Physics.Linecast(spawnPositions[i] + Vector3.up * 0.25f, player.position + Vector3.up * 0.5f, out hit))
+                    {
+                        if (hit.collider.tag == player.tag)
+                        {
+                            validPositions[i] = false;
+                        }
+                    }
+                    else
+                    {
+                        validPositions[i] = false;
+                    }
+                }
+            }
+        }
+
+        List<int> theList = new List<int>();
+        for (int i = 0; i < validPositions.Length; i++)
+        {
+            if (validPositions[i])
+            {
+                theList.Add(i);
+            }
+        }
+        return theList;
     }
 
 }

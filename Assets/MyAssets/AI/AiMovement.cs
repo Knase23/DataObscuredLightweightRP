@@ -23,7 +23,7 @@ public class AiMovement : Movement
             transform.position = hit.position;
             agent = gameObject.AddComponent<NavMeshAgent>();
             agent.radius = 0.2f;
-            agent.height = 1;
+            agent.height = height;
             agent.speed = speedValue.Result();
         }
         else
@@ -34,10 +34,7 @@ public class AiMovement : Movement
     }
 
     public override bool Move()
-    {
-        if (agent.remainingDistance >= 1)
-            return false;
-        
+    {        
         if (pointsToMoveTo.Count > 0)
         {
             agent.SetDestination(pointsToMoveTo[Random.Range(0, pointsToMoveTo.Count)].position);
