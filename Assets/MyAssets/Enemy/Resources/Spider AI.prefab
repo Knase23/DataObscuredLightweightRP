@@ -80,7 +80,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth:
-    Base: 100
+    Base: 20
     Modifier: 0
     Multiplier: 1
 --- !u!114 &2090399666189572817

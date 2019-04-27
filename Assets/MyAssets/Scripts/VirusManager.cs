@@ -37,7 +37,7 @@ public class VirusManager : MonoBehaviour
     {
         int index = Random.Range(0, virusNodes.Count);
         virusNodes[index].SetHarvested(false);
-        Debug.Log("A node is ready to be harvested");
+        //Debug.Log("A node is ready to be harvested");
     }
 
 

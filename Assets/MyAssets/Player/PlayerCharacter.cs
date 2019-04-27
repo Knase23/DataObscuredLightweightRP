@@ -19,8 +19,10 @@ public class PlayerCharacter : MonoBehaviour
     public delegate void PlayerDied();
     public static event PlayerDied OnPlayerDeath;
 
+    public Slider HealthSlider;
     public TextMeshProUGUI HealthText;
     public TextMeshProUGUI ResourceText;
+    
    
 
     // Start is called before the first frame update
@@ -28,8 +30,8 @@ public class PlayerCharacter : MonoBehaviour
     {
         tag = "Player";
         health = GetComponent<Health>();
-        health.EventTakeDamage += UpdateHealthText;
-        health.EventReciveHealth += UpdateHealthText;
+        health.EventTakeDamage += OnTakeDamage;
+        health.EventReciveHealth += OnReciveHealth;
         health.EventDeath += OnDeath;
 
         firstPersonCamera = GetComponent<FirstPersonCamera>();
@@ -42,18 +44,23 @@ public class PlayerCharacter : MonoBehaviour
         drone = FindObjectOfType<DroneAi>();
 
         virusData = GetComponent<PlayerVirusData>();
-        Debug.Log(virusData);
+        
 
 
         PlayerVirusData.OnResourceChanged += PlayerVirusData_OnResourceChanged;
 
+        HealthSlider.value = health.GetCurrent();
         HealthText.text = health.ToString();
         ResourceText.text = virusData.ToString();
     }
 
     private void PlayerVirusData_OnResourceChanged()
     {
-        ResourceText.text = virusData.ToString();
+        if (ResourceText)
+        {
+            ResourceText.text = virusData.ToString();
+            iTween.PunchScale(ResourceText.gameObject, Vector3.up, 0.5f);
+        }
     }
 
     public bool ApplyEffect(Skill skill)
@@ -136,16 +143,29 @@ public class PlayerCharacter : MonoBehaviour
     }
     #endregion
 
+    public void OnReciveHealth()
+    {
+        UpdateHealthText();
+        iTween.PunchScale(HealthSlider.gameObject, Vector3.right * 0.01f, 0.5f);
+    }
+    public void OnTakeDamage()
+    {
+        UpdateHealthText();
+        iTween.PunchScale(HealthSlider.gameObject, Vector3.up, 0.5f);
+    }
     //Functions assosiated with Events/Delegates
     public void UpdateHealthText()
     {
+        HealthSlider.value = health.GetCurrent();
+        HealthSlider.maxValue = health.maxHealth.Result();
         HealthText.text = health.ToString();
+        
         //Debug.Log("Dead",gameObject);
     }
     public void OnDeath()
     {
         //Debug.Log("Damage Taken", gameObject);
-        OnPlayerDeath();
+            OnPlayerDeath();
     }
 
     private void OnTriggerEnter(Collider other)

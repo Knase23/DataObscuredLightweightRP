@@ -64,7 +64,8 @@ public class Weapon : Attack
         {
             return false;
         }
-
+        
+        iTween.PunchPosition(gameObject, Vector3.forward *  0.01f * attackDamage.Result(), attackSpeed.Result());
         Bullet createdBulletObject = Instantiate(bulletPrefab).GetComponent<Bullet>();
         createdBulletObject.transform.position = shootOrigin.transform.position;
         createdBulletObject.SetVelocityDirection(bulletSpeed.Result() * playerCamera.transform.forward);

@@ -7,6 +7,7 @@ public class HealPlayerOverTimeIfHaveChild : MonoBehaviour
     Health playerHealth;
     float timerToTake = 1;
     float timer;
+    public DroneAi droneAi;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,7 +17,7 @@ public class HealPlayerOverTimeIfHaveChild : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (transform.childCount > 0)
+        if (Vector3.Distance(droneAi.transform.position,transform.position) <= 1)
         {
             if (timer <= 0)
             {

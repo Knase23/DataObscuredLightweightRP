@@ -14,10 +14,10 @@ public class DroneAi : Commandable
 
 
     public CustomValue InteractSpeed = new CustomValue(5);
-    private float interactTimer;
+    public float interactTimer;
     private bool interacting;
     public LayerMask interactLayers;
-    private Vector3 interactDirection = new Vector3(0,0,1);
+    private Vector3 interactDirection = new Vector3(0, 0, 1);
     private Vector3 interactOrign;
     private void Start()
     {
@@ -34,7 +34,7 @@ public class DroneAi : Commandable
         {
             Debug.Log("Missed NavMesh");
         }
-        Command(new CommandInfo(CommandInfo.Command.Follow,target:transform.parent));
+        Command(new CommandInfo(CommandInfo.Command.Follow, target: GameObject.Find("FollowPosition").transform));
 
     }
 
@@ -64,24 +64,27 @@ public class DroneAi : Commandable
     {
         currentInfo = info;
 
+
+    }
+    private void Update()
+    {
         switch (currentInfo.command)
         {
             case CommandInfo.Command.Nothing:
-                StateEnd();
-                currentRoutine = null;
-                StateStart();
                 break;
             case CommandInfo.Command.Follow:
-                currentRoutine = StartCoroutine(Follow());
+                interacting = false;
+                Follow();
                 break;
             case CommandInfo.Command.Move:
-                currentRoutine = StartCoroutine(Move());
+                interacting = false;
+                Move();
                 break;
             case CommandInfo.Command.Attack:
                 //currentRoutine = StartCoroutine(Follow());
                 break;
             case CommandInfo.Command.Harvest:
-                currentRoutine = StartCoroutine(Harvest());
+                Harvest();
                 break;
             case CommandInfo.Command.Defend:
                 //currentRoutine = StartCoroutine(Follow());
@@ -90,146 +93,121 @@ public class DroneAi : Commandable
                 break;
         }
     }
-
-    public IEnumerator Follow()
+    public void Follow()
     {
-        
-        StateStart();
-
         if (agent)
         {
-            while (currentInfo.command == CommandInfo.Command.Follow)
+            Vector3 position = currentInfo.target.position;
+
+            if (!agent.isStopped) agent.SetDestination(position);
+
+            if (currentInfo.target?.tag == "FollowPosition")
             {
-                StateStart();
-                Vector3 position = currentInfo.target.position;
-
-                if (!agent.isStopped) agent.SetDestination(position);                
-
-                yield return null;
-                if (currentInfo.target?.tag == "FollowPosition")
+                if (Vector3.Distance(position, transform.position) <= 1)
                 {
-                    if (Vector3.Distance(position, transform.position) <= 1)
-                    {
-                        transform.parent = currentInfo.target;
-                        transform.localPosition = Vector3.zero;
-                        agent.isStopped = true;
-                    }
-                    else
-                    {
-                        transform.parent = null;
-                        agent.isStopped = false;
-                    }
-
-                }
-                yield return null;
-            }
-            transform.parent = null;
-            agent.isStopped = false;
-        }
-        Debug.Log("End Follow Command");
-        StateEnd();
-        yield break;
-    }
-
-    public IEnumerator Move()
-    {
-        StateStart();
-        transform.parent = null;
-        if (agent)
-        {
-            while (currentInfo.command == CommandInfo.Command.Move)
-            {
-                StateStart();
-                Vector3 position = currentInfo.point;
-
-                if (!agent.isStopped) agent.SetDestination(position);
-
-
-                if(Vector3.Distance(position, transform.position) <= 1)
-                {
+                    transform.parent = currentInfo.target;
                     agent.isStopped = true;
                 }
                 else
                 {
+                    transform.parent = null;
                     agent.isStopped = false;
                 }
-
-                yield return null;
             }
+            transform.parent = null;
+            agent.isStopped = false;
         }
-        agent.isStopped = false;
-        Debug.Log("End Move Command");
-        StateEnd();
-        yield break;
+        //Debug.Log("End Follow Command");
+
     }
 
-    public IEnumerator Harvest()
+    public void Move()
     {
-        StateStart();
+        if (agent)
+        {
+
+            StateStart();
+            Vector3 position = currentInfo.point;
+
+            if (!agent.isStopped) agent.SetDestination(position);
+
+
+            if (Vector3.Distance(position, transform.position) <= 1)
+            {
+                agent.isStopped = true;
+            }
+            else
+            {
+                agent.isStopped = false;
+            }
+
+        }
+        agent.isStopped = false;
+    }
+
+    public void Harvest()
+    {
         transform.parent = null;
         Vector3 positionBeforeHarvest = transform.position;
         VirusNode currentTarget = FindNearestVirusNode();
         if (agent)
         {
-            while (currentInfo.command == CommandInfo.Command.Harvest)
+            if (currentTarget)
             {
-                StateStart();
-                if (currentTarget)
-                {
-                    if (currentTarget.harvested)
-                    {
-                        currentTarget = FindNearestVirusNode();
-                    }
-                }
-
-                if (currentTarget)
-                {
-                    Vector3 position = currentTarget.transform.position;
-                    agent.SetDestination(position);
-
-                    if (agent.remainingDistance <= 1)
-                    {
-                        if (interacting)
-                        {
-                            if (interactTimer <= 0)
-                            {
-                                interactOrign = transform.position + (Vector3.up * 0.61f);
-                                interactDirection = currentTarget.transform.position - interactOrign;
-
-                                Ray ray = new Ray(interactOrign, interactDirection);
-                                RaycastHit hit;
-                                if (Physics.Raycast(ray, out hit, 10, interactLayers))
-                                {
-                                    Debug.Log("Drone Interacting");
-                                    if (hit.collider.gameObject == currentTarget.gameObject)
-                                    {
-                                        currentTarget.OnInteract();
-                                    }
-                                }
-                                interacting = false;
-
-                            }
-                            interactTimer -= Time.deltaTime;
-                        }
-                        else
-                        {
-                            interacting = true;
-                            interactTimer = InteractSpeed.Result();
-                        }
-                    }
-                }
-                else
+                if (currentTarget.harvested)
                 {
                     currentTarget = FindNearestVirusNode();
                 }
-
-                yield return null;
             }
+
+            if (currentTarget)
+            {
+                Vector3 position = currentTarget.transform.position;
+                agent.SetDestination(position);
+                Debug.Log("Going to location!");
+                if (agent.remainingDistance <= 1)
+                {
+                    Debug.Log("Good distance from  Node");
+                    if (interacting)
+                    {
+                        Debug.Log("Start To Interact Timer");
+                        if (interactTimer <= 0)
+                        {
+                            interactOrign = transform.position + (Vector3.up * 0.61f);
+                            interactDirection = currentTarget.transform.position - interactOrign;
+
+                            Ray ray = new Ray(interactOrign, interactDirection);
+                            RaycastHit hit;
+                            if (Physics.Raycast(ray, out hit, 10, interactLayers))
+                            {
+                                Debug.Log("Drone Interacting");
+                                if (hit.collider.gameObject == currentTarget.gameObject)
+                                {
+                                    currentTarget.OnInteract();
+                                    interacting = false;
+                                }
+                            }
+
+
+                        }
+
+                        interactTimer -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        interacting = true;
+                        interactTimer = InteractSpeed.Result();
+                    }
+                }
+            }
+            else
+            {
+                currentTarget = FindNearestVirusNode();
+            }
+
+
         }
         agent.isStopped = false;
-        Debug.Log("End Harvest Mode");
-        StateEnd();
-        yield break;
     }
 
     VirusNode FindNearestVirusNode()

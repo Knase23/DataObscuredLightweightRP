@@ -16,7 +16,10 @@ public class Health : MonoBehaviour
 
     public delegate void OnReceiveHealth();
     public event OnReceiveHealth EventReciveHealth;
-
+    private void Awake()
+    {
+        current = maxHealth.Result();
+    }
 
     private void Start()
     {

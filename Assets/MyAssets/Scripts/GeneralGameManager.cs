@@ -9,22 +9,18 @@ public class GeneralGameManager : MonoBehaviour
     public Canvas exitCanvas;
     public Canvas skillTreeCanvas;
 
-
     // Start is called before the first frame update
     void Start()
     {
         PlayerCharacter.OnPlayerDeath += PlayerCharacter_OnPlayerDeath;
-        loseCanvas.gameObject.SetActive(false);
-        exitCanvas.gameObject.SetActive(false);
-        skillTreeCanvas.gameObject.SetActive(false);
+        SetCanvases(false, false, false);
     }
 
-    private void PlayerCharacter_OnPlayerDeath()
+    public void PlayerCharacter_OnPlayerDeath()
     {
         Time.timeScale = 0;
         FirstPersonCamera.UnlockCursor();
-        skillTreeCanvas.gameObject.SetActive(false);
-        loseCanvas.gameObject.SetActive(true);
+        SetCanvases(false, true, false);
     }
 
     public void Retry()
@@ -35,21 +31,25 @@ public class GeneralGameManager : MonoBehaviour
     public void ExitGamePrompt()
     {
         Time.timeScale = 0;
-        skillTreeCanvas.gameObject.SetActive(false);
-        loseCanvas.gameObject.SetActive(false);
-        exitCanvas.gameObject.SetActive(true);
+        SetCanvases(false, false, true);
     }
     public void ExitNo()
     {
-        loseCanvas.gameObject.SetActive(true);
-        exitCanvas.gameObject.SetActive(false);
-        skillTreeCanvas.gameObject.SetActive(false);
+        SetCanvases(false, true, false);
     }
     public void ExitGame()
     {
         Application.Quit();
     }
 
-
+    private  void SetCanvases(bool skillTree, bool lose, bool exit)
+    {
+        if (skillTreeCanvas)
+            skillTreeCanvas.gameObject.SetActive(skillTree);
+        if (loseCanvas)
+            loseCanvas.gameObject.SetActive(lose);
+        if (exitCanvas)
+            exitCanvas.gameObject.SetActive(exit);
+    }
 
 }

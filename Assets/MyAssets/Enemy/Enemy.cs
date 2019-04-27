@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     Movement movement;
     Health health;
     Renderer renderer;
+    Color baseColor;
     protected Animator animator;
     public States currentState;
     public float waitTime = 1;
@@ -19,6 +20,9 @@ public class Enemy : MonoBehaviour
         health = GetComponent<Health>();
         health.EventTakeDamage += OnDamageTaken;
         health.EventDeath += OnDeath;
+        renderer = GetComponentInChildren<Renderer>();
+        baseColor = renderer.material.GetColor("_EmissionColor");
+
 
         animator = GetComponentInChildren<Animator>();
         movement = GetComponent<Movement>();
@@ -77,8 +81,18 @@ public class Enemy : MonoBehaviour
     public void OnDamageTaken()
     {
         animator.SetTrigger("TakeDamage");
-        //Debug.Log("Damaged", gameObject);
+        StartCoroutine(BlinkEmissionColor());
     }
+    IEnumerator BlinkEmissionColor()
+    {
+        Material mat = renderer.material;
+        mat.SetColor("_EmissionColor", Color.grey);
+        yield return new WaitForSeconds(0.1f);
+        mat.SetColor("_EmissionColor", baseColor);
+
+    }
+
+
     public void OnDeath()
     {
         animator.SetBool("Dead", true);

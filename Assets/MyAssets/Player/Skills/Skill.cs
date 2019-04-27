@@ -23,6 +23,6 @@ public class NullSkill : Skill
 {
     public override CustomValue Effect()
     {
-        throw new System.NotImplementedException();
+        return new CustomValue(0, 0, 1);
     }
 }
