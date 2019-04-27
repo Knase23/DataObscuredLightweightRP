@@ -1418,6 +1418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c019c59e2208f1b48b33b55837c04b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  droneAi: {fileID: 315983169}
 --- !u!114 &315983169 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2699344491133495114, guid: ef610793615880d438989ac15876602f,
