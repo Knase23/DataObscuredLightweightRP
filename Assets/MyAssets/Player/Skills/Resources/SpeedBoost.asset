@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: SpeedBoost
   m_EditorClassIdentifier: 
   Name: Increase Movement Speed
-  cost: 25
+  cost: 120
   value:
     Base: 0
-    Modifier: 10
+    Modifier: 1
     Multiplier: 1
   applyTo: 1

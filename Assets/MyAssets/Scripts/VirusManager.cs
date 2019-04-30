@@ -7,7 +7,6 @@ public class VirusManager : MonoBehaviour
 
     public List<VirusNode> virusNodes = new List<VirusNode>();
 
-
     private float timeToTake = 2;
     private float timer = 0;
     // Start is called before the first frame update
@@ -20,18 +19,6 @@ public class VirusManager : MonoBehaviour
             item.SetHarvested(true);
         }
     }
-
-    // Have a update that activate one every 1.5 seconds a Random Enemie (ONLY for Prototype)
-
-    private void Update()
-    {
-        if (timer <= 0 && GetNumberOfActiveViruses() < 4)
-        {
-            ActivateRandomNode();
-            timer = timeToTake;
-        }
-        timer -= Time.deltaTime;
-    }
     // Function that activates one virus node
     private void ActivateRandomNode()
     {
@@ -40,7 +27,10 @@ public class VirusManager : MonoBehaviour
         //Debug.Log("A node is ready to be harvested");
     }
 
-
+    public void ActivateANode()
+    {
+        ActivateRandomNode();
+    }
 
     //Function that returns the number of current activated
     public int GetNumberOfActiveViruses()

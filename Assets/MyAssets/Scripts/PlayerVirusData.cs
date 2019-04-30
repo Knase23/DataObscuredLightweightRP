@@ -12,11 +12,6 @@ public class PlayerVirusData : MonoBehaviour
     public delegate void GivenData(float amount);
     public static event GivenData OnGatherData;
 
-
-
-
-
-
     private void Awake()
     {
         if(instance)

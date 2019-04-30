@@ -22,17 +22,6 @@ public class EnemySpawner : MonoBehaviour
 
         }
     }
-
-    private void Update()
-    {
-        if (timer <= 0 && transform.childCount < 10)
-        {
-            SpawnEnemy(indexSpawnPosition: Random.Range(0, spawnPositions.Count));
-            timer = timeToTake;
-        }
-        timer -= Time.deltaTime;
-    }
-
     public void SpawnEnemy(int enemyOption = 0, int indexSpawnPosition = 0)
     {
         #region Paremeter_Fixing
@@ -132,4 +121,9 @@ public class EnemySpawner : MonoBehaviour
         return theList;
     }
 
+
+    public int GetNubmerOfEnemies()
+    {
+        return transform.childCount;
+    }
 }

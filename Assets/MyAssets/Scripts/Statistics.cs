@@ -4,27 +4,27 @@ using UnityEngine;
 
 public class Statistics : MonoBehaviour
 {
-    public static Statistics instance;
+    public static Statistics INSTANCE;
 
 
     [Header("Stats to track")]
-    [ReadOnly] [SerializeField] private float Kills = 0;
-    [ReadOnly] [SerializeField] private float BoughtUpgrades = 0;
-    [ReadOnly] [SerializeField] private float numberOfTimesPlayerBeenHurt = 0;
-    [ReadOnly] [SerializeField] private float PlayerDamageDone = 0;
-    [ReadOnly] [SerializeField] private float PlayerDamageTaken = 0;
-    [ReadOnly] [SerializeField] private float Healing = 0;
-    [ReadOnly] [SerializeField] private float TotalOfDataGatherd = 0;
-    [ReadOnly] [SerializeField] private float PlayerDeathTime = 0;
+    [ReadOnly] [SerializeField] internal float Kills = 0;
+    [ReadOnly] [SerializeField] internal float BoughtUpgrades = 0;
+    [ReadOnly] [SerializeField] internal float numberOfTimesPlayerBeenHurt = 0;
+    [ReadOnly] [SerializeField] internal float PlayerDamageDone = 0;
+    [ReadOnly] [SerializeField] internal float PlayerDamageTaken = 0;
+    [ReadOnly] [SerializeField] internal float Healing = 0;
+    [ReadOnly] [SerializeField] internal float TotalOfDataGatherd = 0;
+    [ReadOnly] [SerializeField] internal float PlayerDeathTime = 0;
     private void Awake()
     {
-        if (instance)
+        if (INSTANCE)
         {
             Destroy(this);
         }
         else
         {
-            instance = this;
+            INSTANCE = this;
         }
     }
 

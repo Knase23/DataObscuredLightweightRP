@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-
+using UnityEngine.UI;
 public class DroneAi : Commandable
 {
 
     NavMeshAgent agent;
 
+
+    public Image ModeIcon;
     [Header("Harvest mask")]
     public LayerMask mask;
     public float detectionRadius;
@@ -101,6 +103,7 @@ public class DroneAi : Commandable
     {
         if (agent)
         {
+            ModeIcon.color = Color.blue;
             Vector3 position = currentInfo.target.position;
 
             if (!agent.isStopped) agent.SetDestination(position);
@@ -111,11 +114,13 @@ public class DroneAi : Commandable
                 {
                     transform.parent = currentInfo.target;
                     agent.isStopped = true;
+                    ModeIcon.color = Color.green;
                 }
                 else
                 {
                     transform.parent = null;
                     agent.isStopped = false;
+                    ModeIcon.color = Color.blue;
                 }
             }
             transform.parent = null;
@@ -134,10 +139,12 @@ public class DroneAi : Commandable
 
             if (Vector3.Distance(position, transform.position) <= 1)
             {
+                ModeIcon.color = Color.green;
                 agent.isStopped = true;
             }
             else
             {
+                ModeIcon.color = Color.blue;
                 agent.isStopped = false;
             }
 
@@ -154,6 +161,7 @@ public class DroneAi : Commandable
         {
             if (currentTarget && !currentTarget.harvested)
             {
+                ModeIcon.color = Color.blue;
                 Vector3 position = currentTarget.transform.position;
                 agent.SetDestination(position);
 
@@ -162,7 +170,7 @@ public class DroneAi : Commandable
 
                     if (interacting)
                     {
-
+                        ModeIcon.color = Color.blue + Color.red;
                         if (interactTimer <= 0)
                         {
                             interactOrign = transform.position + (Vector3.up * 0.61f);
@@ -193,6 +201,7 @@ public class DroneAi : Commandable
             }
             else
             {
+                ModeIcon.color = Color.red;
                 currentTarget = FindNearestVirusNode();
                 agent.SetDestination(currentInfo.target.position);
             }
