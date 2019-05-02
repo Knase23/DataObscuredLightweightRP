@@ -24,7 +24,7 @@ public class PlayerVirusData : MonoBehaviour
         }
     }
 
-    float resources = 0;
+    public float resources = 0;
 
     public float GetResources()
     {

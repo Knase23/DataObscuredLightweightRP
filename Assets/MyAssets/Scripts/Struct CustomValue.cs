@@ -50,4 +50,15 @@ public struct CustomValue
         return new CustomValue(a.Base, a.Modifier - b.Modifier, a.Multiplier - (b.Multiplier - 1));
     }
 
+    /// <summary>
+    /// Takes the a.base, a.Modifier and multiplies the multiplier with each other
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static CustomValue operator *(CustomValue a, CustomValue b)
+    {
+        return new CustomValue(a.Base, a.Modifier, a.Multiplier * b.Multiplier);
+    }
+
 }

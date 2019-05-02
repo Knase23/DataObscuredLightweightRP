@@ -37,7 +37,10 @@ public abstract class Attack : MonoBehaviour
                 attackDamage += effect.Effect();
                 return true;
             case AttackSkill.ApplyTo.Speed:
-                attackSpeed += effect.Effect();
+                attackSpeed *= effect.Effect();
+                if (attackSpeed.Multiplier < 0.5f)
+                    attackSpeed.Multiplier = 0.5f;
+
                 return true;
             default:
                 break;

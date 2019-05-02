@@ -39,6 +39,7 @@ public class Statistics : MonoBehaviour
         playerHealth.EventReciveHealth += OnPlayerReciveHealth;
         playerHealth.EventTakeDamage += OnPlayerTakeDamage;
 
+        
         Enemy.OnKilled += OnKill;
         Enemy.OnHit += OnPlayerDealtDamage;
 

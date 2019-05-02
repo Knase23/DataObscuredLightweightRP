@@ -10,6 +10,10 @@ public class DroneAi : Commandable
 
 
     public Image ModeIcon;
+    public Sprite HarvestModeSprite;
+    public Sprite FollowModeSprite;
+    public Sprite MoveToPointSprite;
+
     [Header("Harvest mask")]
     public LayerMask mask;
     public float detectionRadius;
@@ -103,6 +107,7 @@ public class DroneAi : Commandable
     {
         if (agent)
         {
+            ModeIcon.sprite = FollowModeSprite;
             ModeIcon.color = Color.blue;
             Vector3 position = currentInfo.target.position;
 
@@ -132,6 +137,7 @@ public class DroneAi : Commandable
     {
         if (agent)
         {
+            ModeIcon.sprite = MoveToPointSprite;
             Vector3 position = currentInfo.point;
 
             if (!agent.isStopped) agent.SetDestination(position);
@@ -159,6 +165,7 @@ public class DroneAi : Commandable
         VirusNode currentTarget = FindNearestVirusNode();
         if (agent)
         {
+            ModeIcon.sprite = HarvestModeSprite;
             if (currentTarget && !currentTarget.harvested)
             {
                 ModeIcon.color = Color.blue;

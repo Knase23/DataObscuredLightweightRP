@@ -201,7 +201,13 @@ public class PlayerCharacter : MonoBehaviour
         //Debug.Log("Damage Taken", gameObject);
             OnPlayerDeath();
     }
-
+    public void Update()
+    {
+        if(transform.position.y <= -3 || transform.position.x >= 25 || transform.position.x <= - 14 || transform.position.z <= -24 || transform.position.z >= 24)
+        {
+            transform.position = Vector3.zero;
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Bullet")

@@ -72,6 +72,7 @@ public class Weapon : Attack
         createdBulletObject.SetOriginator(gameObject);
         createdBulletObject.SetDamage(attackDamage);
         shootTimer = attackSpeed.Result();
+        TriggerOnAttack();
         return true;
     }
 }
